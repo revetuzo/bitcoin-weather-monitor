@@ -7,7 +7,7 @@ The Bitcoin weather monitor shows Bitcoin and weather data on a small TFT displa
 ![Bitcoin-weather-monitor](https://user-images.githubusercontent.com/104918401/201689472-073c5be6-d85a-43f0-b94d-746bc6d09680.png)
 
 Shopping list:
-- NodeMCU v3.4 ESP8266 board (31.2 mm x 57.9 mm)
+- NodeMCU v3.4 ESP8266 board (31.2 mm x 58 mm)
 - 1.77" TFT SPI display (128 x 160) with ST7735 driver (other sizes with the same resolution and driver may work too)
 - GY-21 breakout board for the HTU21 or SHT21 temprature and humidity sensor
 - cables with female/female Dupont connectors, approx. 10cm length
@@ -32,18 +32,15 @@ Instructions:
   - Adafruit_GFX
   - Adafruit_ST7735
   - Sodaq_SHT2x
-  
 - find and follow instructions on how to connect your NodeMCU board with Arduino IDE via USB
-
 - modify the .ino sketch file:
-  - #define MY_TZ, this string defines your timezone and DST rules (set to GMT by default)
+  - #define MY_TZ, this string defines your timezone and DST rules (set to GMT/London by default)
   - point char mempoolserver[] at your own node or just leave it at the default mempool.space address
   - char weatherAPIString: here you have to place your latitude, longitude, and Openweathermap API key
   - enter your WiFi SSID and password in arduino_secrets.h
   - (optional) you can change the date format in the tftClockScreen() function (default is European / German style)
   - (optional) you can change the temperature units in the tftTempWeatherScreen() function
   - (optional) change the data update intverval (5 min) and time per screen (5 s) with int dataUpdateInterval and int timePerScreen in the sketch header
-  
 - compile the sketch and upload to your NodeMCU board
 - use the Serial Monitor during first startup to check that all data are correctly retrieved
   
@@ -58,6 +55,7 @@ Notes:
 - Once we reach seven-digit block height, the font size will have to be adjusted. (Too lazy for automation).
 - The TX fees are the "immediate" (red), "10 min" (orange), and "30 min" (green) TX fees estimated by mempool.
 - The smaller NodeMCU v3.2 board will also work. But it will need a different backplate, will have to adapt the design later.
+- You can remove parts of the code quite easily: E.g. you don't want the temperature and weather data, just remove the related function calls in setup() and loop(). Additionally, you can remove the associated calls and variable declarations in the header and delete the associated functions in the .ino sketch altogether.
 
 To Do:
 - The data types for the various variables are not optimized yet.
