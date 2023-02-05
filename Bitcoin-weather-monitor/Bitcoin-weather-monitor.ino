@@ -91,7 +91,7 @@ HttpClient mempoolclient = HttpClient(sslclient, mempoolserver, 443);
 HttpClient weatherclient = HttpClient(sslclient, weatherserver, 443);
 
 // the openweathermap API string holds the geographic coordinates and the (free) API key
-char weatherAPIString[] = "/data/2.5/weather?lat=51.5&lon=0.0&appid=MYAPIKEY";
+char weatherAPIString[] = "/data/2.5/weather?lat=51.5&lon=0.0&units=metric&appid=MYAPIKEY";
 
 // JSON documents for data processing
 StaticJsonDocument<2048> doc;
@@ -140,6 +140,13 @@ float temperature;
 float humidity;
 
 float temperatureSelfHeatingCorrection = -0.4; // compensate for the heating of the sensor by the NodeMCU board and the display
+
+// #define USE_FAHRENHEIT   // Uncomment this line to use Fahrenheit
+#ifdef USE_FAHRENHEIT
+#define TEMP_SCALE 'F'
+#else
+#define TEMP_SCALE 'C'
+#endif
 
 
 // END INCLUDES AND DECLARATIONS
@@ -287,6 +294,14 @@ void loop() {
 
 // Temperature and Weather related functions and screens
 
+float setTempToScale(float tempC) {
+  float temp = tempC;
+  if (TEMP_SCALE == 'F') {
+    temp = (temp * 1.8) + 32;
+  }
+  return temp;
+}
+
 void getTempHum() {
   // use an exponential moving average with alpha = 0.5 to get more stable readings
   float alpha = 0.5;
@@ -304,8 +319,9 @@ void tftTempWeatherScreen()
   //tft.drawRect(0, 0, tft.width(), tft.height(), TWHITE);
   //tft.drawLine(0, 63, tft.width(), 63, TWHITE);
 
+  float displayTemp = setTempToScale((temperature + temperatureSelfHeatingCorrection));
   char buffer[16];
-  sprintf(buffer, "%4.1fC  %4.1f%% ", (temperature + temperatureSelfHeatingCorrection), humidity);
+  sprintf(buffer, "%4.1f%c  %4.1f%% ", displayTemp, TEMP_SCALE, humidity);
 
   tft.setFont(&FreeSansBold9pt7b);
   tft.setCursor(5,18);
@@ -331,7 +347,8 @@ void tftTempWeatherScreen()
   tft.setFont(&FreeSansBold9pt7b);
   tft.setTextColor(TWHITE);
   
-  sprintf(buffer, "%.1fC    %i%%", outdoorTemperature-273.15, outdoorHumidity);  
+  displayTemp = setTempToScale(outdoorTemperature);
+  sprintf(buffer, "%.1f%c    %i%%", displayTemp, TEMP_SCALE, outdoorHumidity);
   drawCenterString(buffer, 79, 127-4-36);
 
   sprintf(buffer, "%ihPa  %i km/h", outdoorPressure, (int)(outdoorWindspeed*3.6));  
