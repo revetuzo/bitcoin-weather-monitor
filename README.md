@@ -39,7 +39,7 @@ Instructions:
   - char weatherAPIString: here you have to place your latitude, longitude, and Openweathermap API key
   - enter your WiFi SSID and password in arduino_secrets.h
   - (optional) you can change the date format in the tftClockScreen() function (default is European / German style)
-  - (optional) you can change the temperature units in the tftTempWeatherScreen() function
+  - (optional) Uncomment `// #define USE_FAHRENHEIT` to use Fahrenheit instead of Celcius
   - (optional) change the data update intverval (5 min) and time per screen (5 s) with int dataUpdateInterval and int timePerScreen in the sketch header
 - compile the sketch and upload to your NodeMCU board
 - use the Serial Monitor during first startup to check that all data are correctly retrieved
